@@ -1,4 +1,4 @@
-```py
+
 import json
 from ibm_watson import LanguageTranslatorV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -9,12 +9,31 @@ load_dotenv()
 
 apikey = os.environ['apikey']
 url = os.environ['url']
-```
+
+authenticator = IAMAuthenticator(apikey)
+language_translator = LanguageTranslatorV3(
+    version='2018-05-01',
+    authenticator=authenticator
+)
+
+language_translator.set_service_url(url)
+
+translation_direction = input("Type 'en' for English to French or 'fr' for French to English ")
+text = input("Type your text ")
 
 def englishToFrench(englishText):
-    #write the code here
+    frenchText = language_translator.translate(
+    text=englishText,
+    model_id='en-fr').get_result()
     return frenchText
 
 def frenchToEnglish(frenchText):
-    #write the code here
+    englishText = language_translator.translate(
+    text=frenchText,
+    model_id='fr-en').get_result()
     return englishText
+
+if translation_direction == 'en':
+    print(json.dumps(englishToFrench(text), indent=2))
+else:
+    print(json.dumps(frenchToEnglish(text), indent=2))
