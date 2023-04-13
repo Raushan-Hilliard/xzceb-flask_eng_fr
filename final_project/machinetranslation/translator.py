@@ -1,8 +1,7 @@
-
 import json
+import os
 from ibm_watson import LanguageTranslatorV3
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,30 +9,26 @@ load_dotenv()
 apikey = os.environ['apikey']
 url = os.environ['url']
 
+
 authenticator = IAMAuthenticator(apikey)
 language_translator = LanguageTranslatorV3(
     version='2018-05-01',
     authenticator=authenticator
 )
-
 language_translator.set_service_url(url)
 
-translation_direction = input("Type 'en' for English to French or 'fr' for French to English ")
-text = input("Type your text ")
 
-def englishToFrench(englishText):
-    frenchText = language_translator.translate(
-    text=englishText,
+def english_to_french(english_text):
+    """translates from english to french"""
+    french_text = language_translator.translate(
+    text=english_text,
     model_id='en-fr').get_result()
-    return frenchText
+    return french_text['translations'][0]['translation']
 
-def frenchToEnglish(frenchText):
-    englishText = language_translator.translate(
-    text=frenchText,
+
+def french_to_english(french_text):
+    """translates from french to english"""
+    english_text = language_translator.translate(
+    text=french_text,
     model_id='fr-en').get_result()
-    return englishText
-
-if translation_direction == 'en':
-    print(json.dumps(englishToFrench(text), indent=2))
-else:
-    print(json.dumps(frenchToEnglish(text), indent=2))
+    return english_text['translations'][0]['translation']
